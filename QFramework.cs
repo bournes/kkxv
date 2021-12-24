@@ -5,13 +5,13 @@
  * QQ 8510001
  * Code version 2021-12-24
 ************************************/
+
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace QFramework
 {
-   
     #region Architecture
 
     public interface IArchitecture
@@ -115,7 +115,7 @@ namespace QFramework
                 system.Init();
             }
         }
-        
+
         public void RegisterModel<TModel>(TModel model) where TModel : IModel
         {
             model.SetArchitecture(this);
@@ -144,7 +144,6 @@ namespace QFramework
         {
             return mContainer.Get<TModel>();
         }
-
 
 
         public TUtility GetUtility<TUtility>() where TUtility : class, IUtility
@@ -651,6 +650,24 @@ namespace QFramework
                 OnValueChanged = onValueChanged
             };
         }
+
+        // old a.value == b.value  new  a==b
+        public static implicit operator T(BindableProperty<T> property)
+        {
+            return property.Value;
+        }
+
+        public override string ToString()
+        {
+            return Value.ToString();
+        }
+
+        public IUnRegister RegisterWithInitValue(Action<T> onValueChanged)
+        {
+            onValueChanged(mValue);
+            return Register(onValueChanged);
+        }
+
 
         public void UnRegister(Action<T> onValueChanged)
         {
